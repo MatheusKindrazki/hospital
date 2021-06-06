@@ -31,3 +31,21 @@
   )
 
 ;(simula-um-dia)
+
+(defn chega-em-nojento [pessoa]
+  (def hospital (h.logic/chega-em-pausado hospital :espera pessoa))
+  (println "Após inserir" pessoa))
+
+(defn simula-um-dia-em-paralelo []
+  (def hospital (h.model/novo-hospital))
+  (.start (Thread. (fn [] (chega-em-nojento "111"))))
+  (.start (Thread. (fn [] (chega-em-nojento "222"))))
+  (.start (Thread. (fn [] (chega-em-nojento "333"))))
+  (.start (Thread. (fn [] (chega-em-nojento "444"))))
+  (.start (Thread. (fn [] (chega-em-nojento "555"))))
+  (.start (Thread. (fn [] (chega-em-nojento "666"))))
+  (.start (Thread. (fn [] (Thread/sleep 4000)
+                          (pprint hospital))))
+  )
+
+(simula-um-dia-em-paralelo)
