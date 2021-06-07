@@ -26,26 +26,28 @@
   (def hospital (h.logic/chega-em hospital :espera "888"))
   (pprint hospital)
   (def hospital (h.logic/chega-em hospital :espera "999"))
-  (pprint hospital)
-
-  )
+  (pprint hospital))
 
 ;(simula-um-dia)
 
-(defn chega-em-nojento [pessoa]
-  (def hospital (h.logic/chega-em-pausado hospital :espera pessoa))
-  (println "Após inserir" pessoa))
 
-(defn simula-um-dia-em-paralelo []
-  (def hospital (h.model/novo-hospital))
-  (.start (Thread. (fn [] (chega-em-nojento "111"))))
-  (.start (Thread. (fn [] (chega-em-nojento "222"))))
-  (.start (Thread. (fn [] (chega-em-nojento "333"))))
-  (.start (Thread. (fn [] (chega-em-nojento "444"))))
-  (.start (Thread. (fn [] (chega-em-nojento "555"))))
-  (.start (Thread. (fn [] (chega-em-nojento "666"))))
-  (.start (Thread. (fn [] (Thread/sleep 4000)
-                          (pprint hospital))))
-  )
+(defn chega-em-malvado! [hospital pessoa]
+  (swap! hospital h.logic/chega-em hospital :espera pessoa)
+  (println "apos inserir" pessoa))
+
+
+(defn simula-um-dia-em-paralelo
+  []
+  (let [hospital (atom (h.model/novo-hospital))]
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "111"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "222"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "333"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "444"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "555"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "666"))))
+    (.start (Thread. (fn [] (Thread/sleep 4000)
+                       (pprint hospital))))))
 
 (simula-um-dia-em-paralelo)
+
+
